@@ -1,3 +1,39 @@
 - name: Create new user
   user:
-    name: mitrofan
+    name: boochamoocha
+    shell: /bin/bash
+    groups:
+      - sudo
+      - boochamoocha
+      - docker
+
+- name: Allow paswordless sudo
+  copy: 
+    dest: /etc/sudoers.d/paswordless_sudo
+    content: "%sudo  ALL=(ALL) NOPASSWD: ALL"
+
+- name: Add my keys
+  authorized_key:
+    user: boochamoocha
+    key: https://github.com/boochamoocha.keys 
+
+- name: Docker prerequirements
+  apt:
+    name: 
+      - apt-transport-https
+      - curl
+      - ca-certificates
+      - software-properties-common
+
+- name: Add docker apt key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+
+- name: Add docker apt repo
+  apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable
+
+- name: Install docker package
+  apt:
+    name: docker-ce
+    cache_valid_time: 86400
